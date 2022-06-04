@@ -63,11 +63,19 @@ NVC++-F-0155-Compiler failed to translate accelerator region (see -Minfo message
 NVC++/x86-64 Linux 22.5-0: compilation aborted
 ```
 
+When compiling with `-nostdpar` the compilation error is more clear:
+```
+"main.cpp", line 10: error: this declaration has no storage class or type specifier
+  __device__ void fast_sv_2(index_t* f, index_t* f_next, unsigned char adjc[],
+  ^
+```
+
 The compilation succeeds if:
 * no optimization or levels equal or lower than `-O1` are used.
 * nvhpc/22.3 is used (also for `-O2` and `-O3`).
 * the `__device__` keyword is removed, or replaced by `__host__`.
 * the number of iterations is replaced with a value known at compile time (e.g. replacing the expression `adjc[i]` with `3`).
+* compiling for multicore `-stdpar=multicore`.
 
 ## Conclusions
 Obviously, the MRE depicts a somewhat weird use case using declaring a function for execution on the device, while compiling it with nvc++.
