@@ -33,7 +33,8 @@ __device__ void fast_sv_2(index_t* f, index_t* f_next,
 ```
 
 ## Issue description
-The compilation of a C++ standard `for_each_n` loop fails caused by a particular combination of factors, including the usage of higher optimization policies. 
+The compilation of a C++ standard `for_each_n` loop fails.
+This is caused by a particular combination of factors, including the usage of higher optimization policies. 
 First, the function needs to be specified as one that runs on the `__device__`.
 Second, the number of iterations (`adjc[i]`) for the inner loop must be unknown at compile time.
 
