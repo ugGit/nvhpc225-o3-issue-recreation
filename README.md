@@ -55,6 +55,14 @@ NVC++/x86-64 Linux 22.5-0: compilation aborted
 ```
 
 ## Observations
+
+The compilation succeeds if:
+* no optimization or levels equal or lower than `-O1` are used.
+* nvhpc/22.3 is used (also for `-O2` and `-O3`).
+* the `__device__` keyword is removed, or replaced by `__host__`.
+* the number of iterations is replaced with a value known at compile time (e.g. replacing the expression `adjc[i]` with `3`).
+* compiling for multicore `-stdpar=multicore`.
+
 When using `-O2`, the compilation still fails, but with a slightly different error message:
 ```
 nvvmCompileProgram error 9: NVVM_ERROR_COMPILATION.
@@ -70,12 +78,38 @@ When compiling with `-nostdpar` the compilation error is more clear:
   ^
 ```
 
-The compilation succeeds if:
-* no optimization or levels equal or lower than `-O1` are used.
-* nvhpc/22.3 is used (also for `-O2` and `-O3`).
-* the `__device__` keyword is removed, or replaced by `__host__`.
-* the number of iterations is replaced with a value known at compile time (e.g. replacing the expression `adjc[i]` with `3`).
-* compiling for multicore `-stdpar=multicore`.
+Adding the flag `-Minfo messages` during compilation yields the following output:
+```
+main.cpp:
+std::chrono::duration<long, std::ratio<(long)1, (long)1000000000>>::_S_gcd(long, long):
+      2, include "execution"
+         131, include "algorithm_execution.hpp"
+               21, include "stdpar_config.hpp"
+                    34, include "caching_allocator.h"
+                         20, include "allocator.h"
+                              30, include "validator.h"
+                                   22, include "memory_resource.h"
+                                        27, include "memory_resource"
+                                             38, include "shared_mutex"
+                                                  36, include "chrono"
+                                                      460, Loop not vectorized/parallelized: not countable
+std::chrono::duration<long, std::ratio<(long)1, (long)1>>::_S_gcd(long, long):
+      2, include "execution"
+         131, include "algorithm_execution.hpp"
+               21, include "stdpar_config.hpp"
+                    34, include "caching_allocator.h"
+                         20, include "allocator.h"
+                              30, include "validator.h"
+                                   22, include "memory_resource.h"
+                                        27, include "memory_resource"
+                                             38, include "shared_mutex"
+                                                  36, include "chrono"
+                                                      460, Loop not vectorized/parallelized: not countable
+T1 std::for_each_n<counting_iterator, int, fast_sv_2(unsigned short *, unsigned short *, unsigned char *, unsigned short (*)[8])::[lambda(unsigned int) (instance 1)]>(T1, T2, T3):
+        3820, Loop not vectorized/parallelized: contains call
+T2 std::for_each<counting_iterator, fast_sv_2(unsigned short *, unsigned short *, unsigned char *, unsigned short (*)[8])::[lambda(unsigned int) (instance 1)]>(T1, T1, T2):
+          15, Loop not vectorized/parallelized: contains call
+```          
 
 ## Conclusions
 Obviously, the MRE depicts a somewhat weird use case using declaring a function for execution on the device, while compiling it with nvc++.
