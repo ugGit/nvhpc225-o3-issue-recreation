@@ -1,6 +1,6 @@
-#include "CountingIterator.h"
 #include <algorithm>
 #include <execution>
+#include "CountingIterator.h"
 
 // define local constant values
 namespace {
