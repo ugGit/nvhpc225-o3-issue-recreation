@@ -112,7 +112,7 @@ T2 std::for_each<counting_iterator, fast_sv_2(unsigned short *, unsigned short *
 ```          
 
 ## Conclusions
-Obviously, the MRE depicts a somewhat weird use case using declaring a function for execution on the device, while compiling it with nvc++.
+Obviously, the MRE depicts a somewhat weird use case declaring a function for execution on the device, while compiling it with nvc++.
 However, this primarily coding error was introduced by a moment of inattention when rewriting a previous CUDA algorithm.
 Since the very same code compiled and ran successfully with nvhpc/22.3, the error with 22.5 comes surprisingly. 
 Especially, if considering that it only happens when using a high level of optimizations.
