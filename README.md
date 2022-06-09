@@ -59,9 +59,9 @@ NVC++/x86-64 Linux 22.5-0: compilation aborted
 The compilation succeeds if:
 * no optimization or levels equal or lower than `-O1` are used.
 * nvhpc/22.3 is used (also for `-O2` and `-O3`).
-* the `__device__` keyword is removed, or replaced by `__host__`.
 * the number of iterations is replaced with a value known at compile time (e.g. replacing the expression `adjc[i]` with `3`).
 * compiling for multicore `-stdpar=multicore`.
+* the `__device__` keyword is removed, or replaced by `__host__`. However, this does not resolve the issue in the real codebase.
 
 When using `-O2`, the compilation still fails, but with a slightly different error message:
 ```
